@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KETURE | The Inner Archive</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="KETURE: A personal archive of fashion, culture, poetry, and sound. Studio for visions and manifestos.">
+    <meta name="keywords" content="fashion, culture, poetry, archive, journal, creative, studio, visions">
+    <meta name="author" content="KETURE">
+    <meta property="og:title" content="KETURE | The Inner Archive">
+    <meta property="og:description" content="Personal creative archive and studio">
+    <meta property="og:type" content="website">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%235c4033%22>K</text></svg>">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --vogue-black: #1a1a1a;
+            --vogue-white: #fefefe;
+            --vogue-gray: #7a7a7a;
+            --vogue-light-gray: #f8f8f8;
+            --vogue-border: #e8e8e8;
+            --coffee-dark: #3c2a21;
+            --coffee-medium: #5c4033;
+            --coffee-light: #8b7355;
+            --coffee-cream: #f5f1e8;
+            --font-vogue: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+        body {
+            font-family: var(--font-vogue);
+            line-height: 1.6;
+            color: var(--vogue-black);
+            background: var(--vogue-white);
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        a { text-decoration: none; color: inherit; }
+        button { font-family: inherit; }
+        
+        /* ===== ACCESSIBILITY ===== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--coffee-dark);
+            color: white;
+            padding: 8px 16px;
+            z-index: 1000;
+            text-decoration: none;
+        }
+        .skip-link:focus { top: 0; }
+        button:focus, input:focus, select:focus, textarea:focus, a:focus {
+            outline: 2px solid var(--coffee-medium);
+            outline-offset: 2px;
+        }
+        
+        /* ===== EDIT MODE ===== */
+        .edit-mode-control {
+            position: fixed; top: 24px; right: 24px; z-index: 100;
+        }
+        .edit-toggle-btn {
+            background: none; border: 1px solid var(--vogue-border);
+            color: var(--vogue-gray); padding: 8px 16px;
+            font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .edit-toggle-btn:hover {
+            color: var(--coffee-dark); border-color: var(--coffee-light);
+        }
+        
+        /* ===== HEADER ===== */
+        .keture-header { text-align: center; padding: 4rem 0 2rem; }
+        .keture-title {
+            font-family: var(--font-serif); font-weight: 400;
+            letter-spacing: 6px; font-size: 3.5rem;
+            color: var(--coffee-dark); margin-bottom: 0.5rem;
+        }
+        .manifesto {
+            font-size: 0.9rem; letter-spacing: 1px;
+            color: var(--coffee-medium); margin-top: 1rem;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .mind-tabs {
+            display: flex; justify-content: center; gap: 0;
+            margin: 3rem 0 2rem; border-bottom: 1px solid var(--vogue-border);
+        }
+        .tab {
+            padding: 14px 28px; background: none; border: none;
+            color: var(--coffee-medium); font-size: 0.8rem;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            border-bottom: 2px solid transparent; transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .tab:hover { color: var(--coffee-dark); }
+        .tab.active { color: var(--coffee-dark); border-bottom-color: var(--coffee-dark); }
+        .new-thought-btn {
+            margin-left: 3rem; padding: 14px 32px;
+            border: 1px solid var(--coffee-dark); background: var(--coffee-dark);
+            color: var(--vogue-white); font-size: 0.8rem;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .new-thought-btn:hover {
+            background: transparent; color: var(--coffee-dark);
+        }
+        
+        /* ===== STUDIO LINK ===== */
+        .studio-link {
+            text-align: center; margin: 2rem 0 3rem;
+        }
+        .studio-link a {
+            color: var(--coffee-light); font-size: 0.85rem;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            transition: color 0.3s ease; display: inline-flex;
+            align-items: center; gap: 8px; padding: 8px 16px;
+            border: 1px solid transparent;
+        }
+        .studio-link a:hover {
+            color: var(--coffee-dark); border: 1px solid var(--coffee-cream);
+            background: var(--coffee-cream);
+        }
+        
+        /* ===== CONTROLS ===== */
+        .mind-controls {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 2rem 0;
+            border-top: 1px solid var(--vogue-border);
+            border-bottom: 1px solid var(--vogue-border);
+            margin-bottom: 3rem;
+        }
+        .search-mind {
+            flex: 1; position: relative; margin-right: 2rem;
+        }
+        .search-mind i {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%); color: var(--coffee-light);
+        }
+        .search-mind input {
+            width: 100%; padding: 12px 12px 12px 48px;
+            border: 1px solid var(--vogue-border); font-size: 0.9rem;
+            background: var(--vogue-white); transition: all 0.3s ease;
+        }
+        .search-mind input:focus {
+            outline: none; border-color: var(--coffee-dark);
+            box-shadow: 0 0 0 2px rgba(92, 64, 51, 0.1);
+        }
+        .date-filter select {
+            padding: 12px 40px 12px 20px; border: 1px solid var(--vogue-border);
+            font-size: 0.9rem; background: var(--vogue-white);
+            appearance: none; min-width: 160px;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c4033' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 16px center;
+        }
+        .date-filter select:focus { outline: none; border-color: var(--coffee-dark); }
+        
+        /* ===== THOUGHT GRID ===== */
+        .thought-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2.5rem; margin-bottom: 4rem;
+        }
+        .thought-card {
+            background: var(--coffee-cream); border: 1px solid rgba(139, 115, 85, 0.1);
+            padding: 2rem; transition: all 0.4s ease; position: relative;
+        }
+        .thought-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: rgba(139, 115, 85, 0.2);
+        }
+        .thought-header { margin-bottom: 1.5rem; }
+        .thought-title {
+            font-family: var(--font-serif); font-size: 1.3rem;
+            color: var(--coffee-dark); margin-bottom: 0.75rem;
+        }
+        .thought-category {
+            display: inline-block; padding: 4px 12px;
+            background: rgba(139, 115, 85, 0.1); color: var(--coffee-medium);
+            font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .thought-preview {
+            color: var(--coffee-dark); line-height: 1.6;
+            margin-bottom: 1.5rem; font-size: 0.95rem;
+        }
+        .thought-footer {
+            display: flex; justify-content: space-between;
+            align-items: center; padding-top: 1.5rem;
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
+            font-size: 0.8rem; color: var(--coffee-medium);
+        }
+        
+        /* ===== ARCHIVE META ===== */
+        .archive-meta {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 3rem; padding: 3rem 0;
+            border-top: 1px solid var(--vogue-border);
+        }
+        .meta-item {
+            display: flex; align-items: center; gap: 1.5rem;
+            padding: 1.5rem; background: var(--coffee-cream);
+            border-left: 3px solid var(--coffee-light);
+            transition: all 0.3s ease;
+        }
+        .meta-item:hover {
+            background: var(--vogue-white);
+            border-left-color: var(--coffee-dark);
+            transform: translateY(-2px);
+        }
+        .meta-icon { font-size: 1.5rem; color: var(--coffee-light); }
+        .meta-text { display: flex; flex-direction: column; }
+        .meta-count {
+            font-size: 1.8rem; font-weight: 400;
+            color: var(--coffee-dark); font-family: var(--font-serif);
+        }
+        .meta-label {
+            font-size: 0.8rem; letter-spacing: 1px;
+            text-transform: uppercase; color: var(--coffee-medium);
+        }
+        
+        /* ===== MODALS ===== */
+        .password-modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .password-modal-content {
+            background: var(--vogue-white); padding: 3rem;
+            max-width: 400px; width: 90%; text-align: center;
+        }
+        .password-actions {
+            display: flex; gap: 1rem; margin-top: 1.5rem;
+        }
+        .password-actions button {
+            flex: 1; padding: 12px; border: 1px solid var(--vogue-border);
+            background: none; color: var(--vogue-black);
+            font-size: 0.8rem; letter-spacing: 1.5px;
+            text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .password-actions button:hover {
+            background: var(--vogue-black); color: var(--vogue-white);
+            border-color: var(--vogue-black);
+        }
+        
+        /* ===== MOBILE OPTIMIZATION ===== */
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            .keture-title { font-size: 2.5rem; }
+            .mind-tabs { flex-wrap: wrap; gap: 0.5rem; }
+            .tab, .new-thought-btn { padding: 10px 20px; font-size: 0.75rem; }
+            .new-thought-btn { margin-left: 0; margin-top: 0.5rem; width: 100%; }
+            .mind-controls { flex-direction: column; gap: 1.5rem; }
+            .search-mind { margin-right: 0; width: 100%; }
+            .thought-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .archive-meta { grid-template-columns: 1fr; gap: 1.5rem; }
+            .edit-mode-control { top: 16px; right: 16px; }
+            .edit-toggle-btn { padding: 6px 12px; font-size: 0.75rem; }
+            
+            /* Touch targets */
+            button, .tab, .new-thought-btn { min-height: 44px; }
+            input, select, textarea { font-size: 16px !important; }
+        }
+        
+        /* ===== LOADING STATES ===== */
+        .loading { opacity: 0.6; pointer-events: none; }
+        .saving::after {
+            content: '...'; animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        /* ===== NOTIFICATIONS ===== */
+        .notification {
+            position: fixed; top: 20px; right: 20px;
+            padding: 1rem 1.5rem; background: var(--vogue-black);
+            color: var(--vogue-white); min-width: 300px; max-width: 400px;
+            z-index: 9999; transform: translateX(400px);
+            transition: transform 0.3s ease; border-left: 3px solid var(--coffee-medium);
+        }
+        .notification.show { transform: translateX(0); }
+        .notification-success { border-left-color: #28a745; }
+        .notification-error { border-left-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Edit Mode -->
+    <div class="edit-mode-control">
+        <button id="edit-mode-toggle" class="edit-toggle-btn">
+            <i class="fas fa-edit"></i> Edit
+        </button>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="password-modal" id="password-modal">
+        <div class="password-modal-content">
+            <h3><i class="fas fa-key"></i> Enter Edit Mode</h3>
+            <p>Enter your personal key to create and edit entries</p>
+            <input type="password" id="password-input" placeholder="Enter access key...">
+            <div class="password-actions">
+                <button id="cancel-login">Cancel</button>
+                <button id="submit-password">Unlock</button>
+            </div>
+            <p style="font-size:0.85rem;color:var(--vogue-gray);margin-top:1.5rem;">
+                This diary is view-only. Only you can write.
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="keture-header">
+            <div class="brand-signature">
+                <h1 class="keture-title">KETURE</h1>
+                <p class="manifesto">archive of a layered mind — fashion × culture × poetry × sound</p>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="mind-tabs">
+                <button class="tab active" data-category="all">All</button>
+                <button class="tab" data-category="fashion">Fashion</button>
+                <button class="tab" data-category="culture">Culture</button>
+                <button class="tab" data-category="music">Sound</button>
+                <button class="tab" data-category="poetry">Poetry</button>
+                <button id="new-entry-link" class="new-thought-btn">Inscribe</button>
+            </nav>
+
+            <!-- Studio Link -->
+            <div class="studio-link">
+                <a href="studio.html">
+                    <i class="fas fa-film"></i> Studio Archive
+                </a>
+            </div>
+        </header>
+
+        <!-- Controls -->
+        <div class="mind-controls">
+            <div class="search-mind">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search" placeholder="Search archive...">
+            </div>
+            <div class="date-filter">
+                <select id="filter">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main id="main-content" class="thought-grid">
+            <!-- Content loaded by JavaScript -->
+            <div class="thought-card" id="sample-card" style="display:none;">
+                <div class="thought-header">
+                    <h3 class="thought-title">Sample Thought</h3>
+                    <span class="thought-category">Category</span>
+                </div>
+                <div class="thought-preview">
+                    This is a sample thought preview...
+                </div>
+                <div class="thought-footer">
+                    <span class="thought-date">Today</span>
+                    <button class="thought-view">View</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Archive Meta -->
+        <div class="archive-meta">
+            <div class="meta-item">
+                <div class="meta-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="meta-text">
+                    <span class="meta-count" id="total-entries">0</span>
+                    <span class="meta-label">Layered Thoughts</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon"><i class="fas fa-hourglass-half"></i></div>
+                <div class="meta-text">
+                    <span class="meta-date" id="latest-date">-</span>
+                    <span class="meta-label">Latest Inscription</span>
+                </div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-icon"><i class="fas fa-palette"></i></div>
+                <div class="meta-text">
+                    <span class="meta-count" id="categories-count">4</span>
+                    <span class="meta-label">Dimensions</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Backup Section -->
+        <div style="text-align:center;margin:3rem 0;padding-top:2rem;border-top:1px solid var(--vogue-border);">
+            <button onclick="exportAllData()" style="padding:10px 20px;margin:0 8px;background:var(--coffee-cream);border:1px solid var(--coffee-light);color:var(--coffee-medium);cursor:pointer;">
+                <i class="fas fa-download"></i> Backup
+            </button>
+            <label style="padding:10px 20px;margin:0 8px;background:var(--coffee-cream);border:1px solid var(--coffee-light);color:var(--coffee-medium);cursor:pointer;">
+                <i class="fas fa-upload"></i> Restore
+                <input type="file" accept=".json" onchange="importAllData(event)" style="display:none;">
+            </label>
+            <p style="font-size:0.8rem;color:var(--vogue-gray);margin-top:1rem;">
+                Export/Import your entire archive
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const PASSWORD = "keture2024";
+        const STORAGE_KEYS = {
+            ENTRIES: 'keture_entries',
+            VISIONS: 'keture_visions',
+            AUTH: 'keture_authenticated'
+        };
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initArchive();
+                showNotification('Archive loaded', 'info');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showNotification('Failed to load archive', 'error');
+            }
+        });
+        
+        function initArchive() {
+            // Load data
+            loadEntries();
+            updateStats();
+            
+            // Setup event listeners
+            document.getElementById('edit-mode-toggle').addEventListener('click', toggleEditMode);
+            document.getElementById('submit-password').addEventListener('click', submitPassword);
+            document.getElementById('cancel-login').addEventListener('click', () => {
+                document.getElementById('password-modal').style.display = 'none';
+            });
+            
+            // Setup navigation
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => filterEntries(tab.dataset.category));
+            });
+            
+            // Setup search
+            document.getElementById('search').addEventListener('input', (e) => {
+                searchEntries(e.target.value);
+            });
+            
+            // Setup filter
+            document.getElementById('filter').addEventListener('change', (e) => {
+                filterByDate(e.target.value);
+            });
+            
+            // Setup new entry
+            document.getElementById('new-entry-link').addEventListener('click', () => {
+                if (checkAuth()) showEntryModal();
+            });
+            
+            // Update edit mode UI
+            updateEditModeUI(localStorage.getItem(STORAGE_KEYS.AUTH) === 'true');
+        }
+        
+        // ===== CORE FUNCTIONS =====
+        function loadEntries() {
+            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+            const container = document.getElementById('main-content');
+            
+            if (!container) {
+                console.error('Main content container not found!');
+                return;
+            }
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div class="thought-card" style="text-align:center;padding:3rem;"><p style="color:var(--vogue-gray);">No entries yet. Enter edit mode and click "Inscribe" to begin.</p></div>';
+                return;
+            }
+            
+            container.innerHTML = entries.map(entry => `
+                <div class="thought-card" data-category="${entry.category}" data-date="${entry.date}">
+                    <div class="thought-header">
+                        <h3 class="thought-title">${entry.title}</h3>
+                        <span class="thought-category">${entry.category}</span>
+                    </div>
+                    <div class="thought-preview">
+                        ${entry.content.substring(0, 150)}${entry.content.length > 150 ? '...' : ''}
+                    </div>
+                    <div class="thought-footer">
+                        <span class="thought-date">${formatDate(entry.date)}</span>
+                        <button class="thought-view" onclick="viewEntry('${entry.id}')">View</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateStats() {
+            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+            const categories = new Set(entries.map(e => e.category));
+            
+            document.getElementById('total-entries').textContent = entries.length;
+            document.getElementById('categories-count').textContent = categories.size;
+            
+            if (entries.length > 0) {
+                const latest = entries.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                document.getElementById('latest-date').textContent = formatDate(latest.date);
+            }
+        }
+        
+        // ===== AUTHENTICATION =====
+        function toggleEditMode() {
+            const isAuthenticated = localStorage.getItem(STORAGE_KEYS.AUTH) === 'true';
+            
+            if (isAuthenticated) {
+                localStorage.setItem(STORAGE_KEYS.AUTH, 'false');
+                updateEditModeUI(false);
+                showNotification('Edit mode disabled', 'info');
+            } else {
+                document.getElementById('password-modal').style.display = 'flex';
+                document.getElementById('password-input').focus();
+            }
+        }
+        
+        function submitPassword() {
+            const input = document.getElementById('password-input');
+            if (input.value === PASSWORD) {
+                localStorage.setItem(STORAGE_KEYS.AUTH, 'true');
+                updateEditModeUI(true);
+                document.getElementById('password-modal').style.display = 'none';
+                input.value = '';
+                showNotification('Edit mode enabled', 'success');
+            } else {
+                showNotification('Incorrect password', 'error');
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        function checkAuth() {
+            const isAuthenticated = localStorage.getItem(STORAGE_KEYS.AUTH) === 'true';
+            if (!isAuthenticated) {
+                showNotification('Enter edit mode first', 'error');
+                document.getElementById('password-modal').style.display = 'flex';
+                document.getElementById('password-input').focus();
+                return false;
+            }
+            return true;
+        }
+        
+        function updateEditModeUI(isAuthenticated) {
+            const btn = document.getElementById('edit-mode-toggle');
+            if (isAuthenticated) {
+                btn.innerHTML = '<i class="fas fa-unlock"></i> Lock';
+                btn.style.color = 'var(--coffee-dark)';
+                btn.style.borderColor = 'var(--coffee-dark)';
+            } else {
+                btn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }
+        }
+        
+        // ===== ENTRY MANAGEMENT =====
+        function showEntryModal() {
+            // Remove existing modal if any
+            const existingModal = document.getElementById('entry-creation-modal');
+            if (existingModal) existingModal.remove();
+            
+            // Create modal HTML
+            const modalHTML = `
+                <div id="entry-creation-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1001;display:flex;align-items:center;justify-content:center;">
+                    <div style="background:var(--vogue-white);padding:3rem;max-width:500px;width:90%;border-radius:8px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                            <h3 style="font-family:var(--font-serif);color:var(--coffee-dark);">Create New Entry</h3>
+                            <button onclick="document.getElementById('entry-creation-modal').remove()" style="background:none;border:none;font-size:1.5rem;color:var(--vogue-gray);cursor:pointer;">&times;</button>
+                        </div>
+                        
+                        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+                            <div>
+                                <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Entry Title</label>
+                                <input type="text" id="modal-entry-title" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                            </div>
+                            
+                            <div>
+                                <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Category</label>
+                                <select id="modal-entry-category" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                                    <option value="fashion">Fashion</option>
+                                    <option value="culture">Culture</option>
+                                    <option value="music">Sound</option>
+                                    <option value="poetry">Poetry</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Content</label>
+                                <textarea id="modal-entry-content" rows="6" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;resize:vertical;border-radius:4px;"></textarea>
+                            </div>
+                            
+                            <div style="display:flex;gap:1rem;margin-top:1rem;">
+                                <button onclick="document.getElementById('entry-creation-modal').remove()" style="flex:1;padding:12px;background:var(--vogue-light-gray);border:1px solid var(--vogue-border);color:var(--vogue-black);cursor:pointer;border-radius:4px;">Cancel</button>
+                                <button onclick="submitNewEntry()" style="flex:1;padding:12px;background:var(--coffee-dark);border:none;color:white;cursor:pointer;border-radius:4px;">Create Entry</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.getElementById('modal-entry-title').focus();
+        }
+        
+        function submitNewEntry() {
+            const title = document.getElementById('modal-entry-title').value;
+            const category = document.getElementById('modal-entry-category').value;
+            const content = document.getElementById('modal-entry-content').value;
+            
+            if (title && category && content) {
+                const newEntry = {
+                    id: Date.now(),
+                    title: title,
+                    category: category.toLowerCase(),
+                    content: content,
+                    date: new Date().toISOString(),
+                    tags: []
+                };
+                
+                const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+                entries.push(newEntry);
+                localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(entries));
+                
+                document.getElementById('entry-creation-modal').remove();
+                loadEntries();
+                updateStats();
+                showNotification('Entry created', 'success');
+            } else {
+                showNotification('Please fill all fields', 'error');
+            }
+        }
+        
+        function viewEntry(id) {
+            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+            const entry = entries.find(e => e.id == id);
+            
+            if (entry) {
+                const modal = `
+                    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;">
+                        <div style="background:var(--vogue-white);padding:3rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;">
+                            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:2rem;">
+                                <div>
+                                    <h2 style="font-family:var(--font-serif);color:var(--coffee-dark);margin-bottom:0.5rem;">${entry.title}</h2>
+                                    <span style="background:rgba(139,115,85,0.1);color:var(--coffee-medium);padding:4px 12px;font-size:0.8rem;">${entry.category}</span>
+                                </div>
+                                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:none;border:none;font-size:1.5rem;color:var(--vogue-gray);cursor:pointer;">&times;</button>
+                            </div>
+                            <div style="color:var(--coffee-dark);line-height:1.6;margin-bottom:2rem;">
+                                ${entry.content.replace(/\n/g, '<br>')}
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid var(--vogue-border);">
+                                <span style="color:var(--coffee-medium);font-size:0.9rem;">${formatDate(entry.date)}</span>
+                                ${localStorage.getItem(STORAGE_KEYS.AUTH) === 'true' ? `
+                                    <div>
+                                        <button onclick="editEntry('${entry.id}')" style="padding:8px 16px;margin-left:8px;background:var(--coffee-dark);color:white;border:none;cursor:pointer;">Edit</button>
+                                        <button onclick="deleteEntry('${entry.id}')" style="padding:8px 16px;margin-left:8px;background:#dc3545;color:white;border:none;cursor:pointer;">Delete</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modal);
+            }
+        }
+        
+        function editEntry(id) {
+            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+            const entry = entries.find(e => e.id == id);
+            
+            if (entry) {
+                // Remove view modal
+                document.querySelector('[style*="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8)"]')?.remove();
+                
+                // Create edit modal
+                const modalHTML = `
+                    <div id="entry-edit-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1001;display:flex;align-items:center;justify-content:center;">
+                        <div style="background:var(--vogue-white);padding:3rem;max-width:500px;width:90%;border-radius:8px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                                <h3 style="font-family:var(--font-serif);color:var(--coffee-dark);">Edit Entry</h3>
+                                <button onclick="document.getElementById('entry-edit-modal').remove()" style="background:none;border:none;font-size:1.5rem;color:var(--vogue-gray);cursor:pointer;">&times;</button>
+                            </div>
+                            
+                            <div style="display:flex;flex-direction:column;gap:1.5rem;">
+                                <div>
+                                    <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Entry Title</label>
+                                    <input type="text" id="edit-entry-title" value="${entry.title}" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                                </div>
+                                
+                                <div>
+                                    <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Category</label>
+                                    <select id="edit-entry-category" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                                        <option value="fashion" ${entry.category === 'fashion' ? 'selected' : ''}>Fashion</option>
+                                        <option value="culture" ${entry.category === 'culture' ? 'selected' : ''}>Culture</option>
+                                        <option value="music" ${entry.category === 'music' ? 'selected' : ''}>Sound</option>
+                                        <option value="poetry" ${entry.category === 'poetry' ? 'selected' : ''}>Poetry</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Content</label>
+                                    <textarea id="edit-entry-content" rows="6" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;resize:vertical;border-radius:4px;">${entry.content}</textarea>
+                                </div>
+                                
+                                <div style="display:flex;gap:1rem;margin-top:1rem;">
+                                    <button onclick="document.getElementById('entry-edit-modal').remove()" style="flex:1;padding:12px;background:var(--vogue-light-gray);border:1px solid var(--vogue-border);color:var(--vogue-black);cursor:pointer;border-radius:4px;">Cancel</button>
+                                    <button onclick="submitEditEntry('${entry.id}')" style="flex:1;padding:12px;background:var(--coffee-dark);border:none;color:white;cursor:pointer;border-radius:4px;">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                document.getElementById('edit-entry-title').focus();
+            }
+        }
+        
+        function submitEditEntry(id) {
+            const title = document.getElementById('edit-entry-title').value;
+            const category = document.getElementById('edit-entry-category').value;
+            const content = document.getElementById('edit-entry-content').value;
+            
+            if (title && category && content) {
+                const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+                const index = entries.findIndex(e => e.id == id);
+                
+                if (index !== -1) {
+                    entries[index] = {
+                        ...entries[index],
+                        title: title,
+                        category: category.toLowerCase(),
+                        content: content,
+                        date: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(entries));
+                    
+                    document.getElementById('entry-edit-modal').remove();
+                    loadEntries();
+                    updateStats();
+                    showNotification('Entry updated', 'success');
+                }
+            } else {
+                showNotification('Please fill all fields', 'error');
+            }
+        }
+        
+        function deleteEntry(id) {
+            if (!confirm('Are you sure you want to delete this entry?')) return;
+            
+            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+            const filteredEntries = entries.filter(e => e.id != id);
+            
+            localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(filteredEntries));
+            
+            // Remove view modal
+            document.querySelector('[style*="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8)"]')?.remove();
+            
+            loadEntries();
+            updateStats();
+            showNotification('Entry deleted', 'info');
+        }
+        
+        // ===== FILTER & SEARCH =====
+        function filterEntries(category) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === category);
+            });
+            
+            document.querySelectorAll('.thought-card').forEach(card => {
+                card.style.display = category === 'all' || card.dataset.category === category ? 'block' : 'none';
+            });
+        }
+        
+        function searchEntries(query) {
+            const cards = document.querySelectorAll('.thought-card');
+            const searchTerm = query.toLowerCase();
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.thought-title').textContent.toLowerCase();
+                const content = card.querySelector('.thought-preview').textContent.toLowerCase();
+                const category = card.querySelector('.thought-category').textContent.toLowerCase();
+                
+                const matches = title.includes(searchTerm) || 
+                               content.includes(searchTerm) || 
+                               category.includes(searchTerm);
+                
+                card.style.display = matches ? 'block' : 'none';
+            });
+        }
+        
+        function filterByDate(range) {
+            const cards = document.querySelectorAll('.thought-card');
+            const now = new Date();
+            
+            cards.forEach(card => {
+                const entryDate = new Date(card.dataset.date);
+                let show = true;
+                
+                switch(range) {
+                    case 'today':
+                        show = entryDate.toDateString() === now.toDateString();
+                        break;
+                    case 'week':
+                        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        show = entryDate >= weekAgo;
+                        break;
+                    case 'month':
+                        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                        show = entryDate >= monthAgo;
+                        break;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+        
+        // ===== BACKUP SYSTEM =====
+        function exportAllData() {
+            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
+            const visions = JSON.parse(localStorage.getItem(STORAGE_KEYS.VISIONS) || '[]');
+            
+            const allData = {
+                entries: entries,
+                visions: visions,
+                exportedAt: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const fileName = `keture-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', fileName);
+            link.click();
+            
+            showNotification('Backup downloaded', 'success');
+        }
+        
+        function importAllData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm(`Import ${data.entries?.length || 0} entries and ${data.visions?.length || 0} visions?`)) {
+                        if (data.entries) localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(data.entries));
+                        if (data.visions) localStorage.setItem(STORAGE_KEYS.VISIONS, JSON.stringify(data.visions));
+                        
+                        loadEntries();
+                        updateStats();
+                        showNotification('Data imported successfully', 'success');
+                    }
+                } catch (error) {
+                    showNotification('Error importing data', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // ===== UTILITIES =====
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days} days ago`;
+            if (days < 30) return `${Math.floor(days/7)} weeks ago`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;margin-left:1rem;">&times;</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Make functions available globally
+        window.viewEntry = viewEntry;
+        window.editEntry = editEntry;
+        window.deleteEntry = deleteEntry;
+        window.exportAllData = exportAllData;
+        window.importAllData = importAllData;
+        window.submitNewEntry = submitNewEntry;
+        window.submitEditEntry = submitEditEntry;
+    </script>
+</body>
+</html>
