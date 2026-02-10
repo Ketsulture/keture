@@ -1,0 +1,330 @@
+/* KETURE - CLEAN MINIMAL THEME */
+:root {
+    --vogue-black: #000;      /* Change to any dark color */
+    --vogue-white: #fff;      /* Background color */
+    --vogue-gray: #8a8a8a;    /* Secondary text */
+    --vogue-accent: #000;     /* Active/hover states */
+    --font-vogue: 'Inter';    /* Change font family */
+    --coffee-light: #f8f4ef;    /* Light coffee/cream for cards */
+--coffee-medium: #8b7355;   /* Medium coffee for accents */
+--coffee-dark: #5c4033;     /* Dark coffee for text accents */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-clean);
+    background-color: var(--pure-white);
+    color: var(--charcoal);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-weight: 300;
+}
+
+.mindscape {
+    position: relative;
+    min-height: 100vh;
+    background: var(--pure-white);
+}
+
+/* ===== LAYOUT FIXES ===== */
+.container {
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    z-index: 1;
+}
+
+/* Thought Grid - FIXED LAYOUT */
+.thought-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+.thought-card {
+    background: var(--pure-white);
+    border: 1px solid var(--light-gray);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+    width: 100%;
+}
+
+.thought-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--medium-gray);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== EDIT MODE CONTROLS ===== */
+.edit-mode-control {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1000;
+}
+
+.edit-toggle-btn {
+    padding: 0.8rem 1.5rem;
+    background: var(--charcoal);
+    color: var(--pure-white);
+    border: 1px solid var(--charcoal);
+    border-radius: 4px;
+    font-family: var(--font-clean);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    z-index: 1001;
+}
+
+.edit-toggle-btn:hover {
+    background: var(--pure-black);
+    transform: translateY(-1px);
+}
+
+.mode-status {
+    font-size: 0.85rem;
+    color: var(--dark-gray);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    background: var(--light-gray);
+    border-radius: 20px;
+    border: 1px solid var(--medium-gray);
+}
+
+.mode-status.edit-mode {
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+/* Password Modal */
+.password-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.password-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--pure-white);
+    padding: 2.5rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.password-modal-content h3 {
+    font-family: var(--font-vogue);
+    font-size: 1.8rem;
+    color: var(--charcoal);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.password-modal-content p {
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.password-input {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--medium-gray);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: var(--font-clean);
+}
+
+.password-input:focus {
+    outline: none;
+    border-color: var(--charcoal);
+}
+
+.password-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.password-actions button {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-clean);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary {
+    background: var(--light-gray);
+    color: var(--dark-gray);
+    border: 1px solid var(--medium-gray);
+}
+
+.btn-secondary:hover {
+    background: var(--medium-gray);
+}
+
+.btn-primary {
+    background: var(--charcoal);
+    color: var(--pure-white);
+}
+
+.btn-primary:hover {
+    background: var(--pure-black);
+}
+
+.password-hint {
+    font-size: 0.85rem;
+    color: var(--dark-gray);
+    font-style: italic;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--light-gray);
+}
+
+/* Disabled buttons */
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* Floating words background */
+.floating-words {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.float-word {
+    position: absolute;
+    font-family: var(--font-vogue);
+    font-weight: 700;
+    font-style: italic;
+    color: rgba(108, 117, 125, 0.03);
+    font-size: 2rem;
+    text-transform: uppercase;
+    animation: float 25s infinite linear;
+}
+
+.float-word:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+.float-word:nth-child(2) { top: 20%; right: 10%; animation-delay: -5s; }
+.float-word:nth-child(3) { top: 40%; left: 15%; animation-delay: -10s; }
+.float-word:nth-child(4) { bottom: 30%; right: 15%; animation-delay: -15s; }
+.float-word:nth-child(5) { bottom: 15%; left: 10%; animation-delay: -20s; }
+.float-word:nth-child(6) { top: 60%; right: 5%; animation-delay: -25s; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.03; }
+    50% { transform: translateY(-20px) rotate(5deg); opacity: 0.05; }
+}
+
+/* Keture Header */
+.keture-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--light-gray);
+    padding-bottom: 2rem;
+    text-align: center;
+}
+
+.brand-signature {
+    margin-bottom: 2rem;
+}
+
+.keture-title {
+    font-family: var(--font-vogue);
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: var(--pure-black);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+}
+
+.keture-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 1px;
+    background: var(--charcoal);
+}
+
+.subtitle-line {
+    height: 1px;
+    background: var(--light-gray);
+    margin: 2rem auto 1.5rem;
+    width: 300px;
+}
+
+.manifesto {
+    font-family: var(--font-classic);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    letter-spacing: 1px;
+}
+
+/* Mind Tabs */
+.mind-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.tab {
+    padding: 0.8rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--medium-gray);
+    border-radius: 4px;
+    color: var
