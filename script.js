@@ -37,7 +37,7 @@ function setupPasswordProtection() {
     const newEntryLink = document.getElementById('new-entry-link');
     
     // Set your password here
-    const SECRET_PASSWORD = "keture2024"; // You can change this
+    const SECRET_PASSWORD = "imgoingtobeasuccess1998"; // You can change this
     
     // Check authentication on page load
     const isAuthenticated = localStorage.getItem('keture_authenticated') === 'true';
@@ -140,8 +140,9 @@ function updateAuthUI(isAuthenticated) {
         
         if (newEntryLink) {
             newEntryLink.classList.remove('disabled');
-            newEntryLink.href = 'new-entry.html';
+            newEntryLink.href = 'javascript:void(0)';
             newEntryLink.innerHTML = '<i class="fas fa-plus-circle"></i> Inscribe Thought';
+            newEntryLink.onclick = createNewEntry;
         }
         
         // Show edit/delete buttons in modal
@@ -163,14 +164,122 @@ function updateAuthUI(isAuthenticated) {
         
         if (newEntryLink) {
             newEntryLink.classList.add('disabled');
-            newEntryLink.href = '#';
+            newEntryLink.href = 'javascript:void(0)';
             newEntryLink.innerHTML = '<i class="fas fa-lock"></i> Locked';
+            newEntryLink.onclick = function() {
+                showNotification('Enter edit mode first', 'error');
+            };
         }
         
         // Hide edit/delete buttons in modal
         if (modalEditBtn) modalEditBtn.style.display = 'none';
         if (modalDeleteBtn) modalDeleteBtn.style.display = 'none';
     }
+}
+
+// ===== FORM-BASED ENTRY CREATION =====
+function createNewEntry() {
+    // Check if user is authenticated
+    const isAuthenticated = localStorage.getItem('keture_authenticated') === 'true';
+    if (!isAuthenticated) {
+        showNotification('Enter edit mode first', 'error');
+        const passwordModal = document.getElementById('password-modal');
+        if (passwordModal) {
+            passwordModal.style.display = 'block';
+            document.getElementById('password-input').focus();
+        }
+        return;
+    }
+    
+    // Remove any existing form
+    const existingForm = document.getElementById('entry-form-modal');
+    if (existingForm) existingForm.remove();
+    
+    // Create form modal
+    const formHTML = `
+        <div id="entry-form-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1001;display:flex;align-items:center;justify-content:center;">
+            <div style="background:var(--vogue-white);padding:3rem;max-width:500px;width:90%;border-radius:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                    <h3 style="font-family:var(--font-serif);color:var(--coffee-dark);">Create New Entry</h3>
+                    <button onclick="document.getElementById('entry-form-modal').remove()" style="background:none;border:none;font-size:1.5rem;color:var(--vogue-gray);cursor:pointer;">&times;</button>
+                </div>
+                
+                <form id="new-entry-form" style="display:flex;flex-direction:column;gap:1.5rem;">
+                    <div>
+                        <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Entry Title</label>
+                        <input type="text" id="entry-title" required style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Category</label>
+                        <select id="entry-category" required style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                            <option value="fashion">Fashion</option>
+                            <option value="culture">Culture</option>
+                            <option value="music">Sound</option>
+                            <option value="poetry">Poetry</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Content</label>
+                        <textarea id="entry-content" required rows="6" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;resize:vertical;border-radius:4px;"></textarea>
+                        <div style="font-size:0.8rem;color:var(--vogue-gray);margin-top:0.5rem;">Word count: <span id="form-word-count">0</span></div>
+                    </div>
+                    
+                    <div style="display:flex;gap:1rem;margin-top:1rem;">
+                        <button type="button" onclick="document.getElementById('entry-form-modal').remove()" style="flex:1;padding:12px;background:var(--vogue-light-gray);border:1px solid var(--vogue-border);color:var(--vogue-black);cursor:pointer;border-radius:4px;">Cancel</button>
+                        <button type="submit" style="flex:1;padding:12px;background:var(--coffee-dark);border:none;color:white;cursor:pointer;border-radius:4px;">Create Entry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', formHTML);
+    
+    // Add word count functionality
+    const textarea = document.getElementById('entry-content');
+    const wordCountSpan = document.getElementById('form-word-count');
+    
+    textarea.addEventListener('input', function() {
+        const text = this.value.trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        wordCountSpan.textContent = words;
+    });
+    
+    // Handle form submission
+    document.getElementById('new-entry-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('entry-title').value;
+        const category = document.getElementById('entry-category').value;
+        const content = document.getElementById('entry-content').value;
+        
+        if (title && category && content) {
+            const newEntry = {
+                id: Date.now(),
+                title: title,
+                category: category.toLowerCase(),
+                content: content,
+                date: new Date().toISOString(),
+                tags: []
+            };
+            
+            const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+            entries.push(newEntry);
+            localStorage.setItem('keture_entries', JSON.stringify(entries));
+            
+            loadEntries();
+            updateStats();
+            document.getElementById('entry-form-modal').remove();
+            showNotification('Entry created successfully!', 'success');
+        } else {
+            showNotification('Please fill in all fields', 'error');
+        }
+    });
+    
+    // Focus on title field
+    setTimeout(() => document.getElementById('entry-title').focus(), 100);
 }
 
 // IMAGE UPLOAD FUNCTIONALITY
@@ -297,7 +406,9 @@ function setupImageUpload() {
         
         imagePreviewContainer.appendChild(previewDiv);
     }
-}// Add to your image upload function in script.js
+}
+
+// Image compression function
 function compressImage(file, maxWidth = 1200, quality = 0.8) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -332,6 +443,70 @@ function compressImage(file, maxWidth = 1200, quality = 0.8) {
     });
 }
 
+function loadEntries() {
+    const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+    const container = document.getElementById('entries-container');
+    
+    if (!container) return;
+    
+    if (entries.length === 0) {
+        container.innerHTML = `
+            <div class="thought-card">
+                <div class="thought-header">
+                    <h3 class="thought-title">Welcome to KETURE</h3>
+                    <span class="thought-category">Archive</span>
+                </div>
+                <div class="thought-preview">
+                    This is your personal archive. Enter edit mode and click "Inscribe" to add your first thought.
+                </div>
+                <div class="thought-footer">
+                    <span class="thought-date">Today</span>
+                    <button class="thought-view">View</button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = entries.map(entry => `
+        <div class="thought-card" data-category="${entry.category}" data-date="${entry.date}">
+            <div class="thought-header">
+                <h3 class="thought-title">${entry.title}</h3>
+                <span class="thought-category">${entry.category}</span>
+            </div>
+            <div class="thought-preview">
+                ${entry.content.substring(0, 150)}${entry.content.length > 150 ? '...' : ''}
+            </div>
+            <div class="thought-footer">
+                <span class="thought-date">${formatDate(entry.date)}</span>
+                <button class="thought-view" onclick="viewEntry('${entry.id}')">View</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateStats() {
+    const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+    const categories = new Set(entries.map(e => e.category));
+    
+    const totalEntriesEl = document.getElementById('total-entries');
+    const categoriesCountEl = document.getElementById('categories-count');
+    const latestDateEl = document.getElementById('latest-date');
+    
+    if (totalEntriesEl) totalEntriesEl.textContent = entries.length;
+    if (categoriesCountEl) categoriesCountEl.textContent = categories.size;
+    
+    if (entries.length > 0 && latestDateEl) {
+        const latest = entries.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+        latestDateEl.textContent = formatDate(latest.date);
+    }
+}
+
+function setupViewToggle() {
+    // This function sets up the expand/collapse functionality for entries
+    // You can customize this based on how you want entries to display
+}
+
 function setupEventListeners() {
     // Modal close button
     const modalClose = document.getElementById('modal-close');
@@ -358,6 +533,10 @@ function setupEventListeners() {
                 passwordModal.style.display = 'none';
                 document.getElementById('password-input').value = '';
             }
+            const entryFormModal = document.getElementById('entry-form-modal');
+            if (entryFormModal) {
+                entryFormModal.remove();
+            }
         }
     });
     
@@ -378,35 +557,292 @@ function setupEventListeners() {
     }
 }
 
-// Word counter for new entry page
-document.addEventListener('DOMContentLoaded', function() {
-    const entryContent = document.getElementById('entry-content');
-    const wordCountSpan = document.getElementById('word-count');
-    const charCountSpan = document.getElementById('char-count');
+function filterEntries(searchTerm) {
+    const cards = document.querySelectorAll('.thought-card');
     
-    if (entryContent && wordCountSpan && charCountSpan) {
-        function updateWordCount() {
-            const text = entryContent.value.trim();
-            const words = text ? text.split(/\s+/).length : 0;
-            const chars = text.length;
-            wordCountSpan.textContent = words;
-            charCountSpan.textContent = chars;
+    cards.forEach(card => {
+        const title = card.querySelector('.thought-title').textContent.toLowerCase();
+        const content = card.querySelector('.thought-preview').textContent.toLowerCase();
+        const category = card.querySelector('.thought-category').textContent.toLowerCase();
+        
+        const matches = title.includes(searchTerm) || 
+                       content.includes(searchTerm) || 
+                       category.includes(searchTerm);
+        
+        card.style.display = matches ? 'block' : 'none';
+    });
+}
+
+function filterEntriesByDate(range) {
+    const cards = document.querySelectorAll('.thought-card');
+    const now = new Date();
+    
+    cards.forEach(card => {
+        const entryDate = new Date(card.dataset.date);
+        let show = true;
+        
+        switch(range) {
+            case 'today':
+                show = entryDate.toDateString() === now.toDateString();
+                break;
+            case 'week':
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                show = entryDate >= weekAgo;
+                break;
+            case 'month':
+                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                show = entryDate >= monthAgo;
+                break;
         }
         
-        entryContent.addEventListener('input', updateWordCount);
-        updateWordCount();
+        card.style.display = show ? 'block' : 'none';
+    });
+}
+
+function viewEntry(id) {
+    const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+    const entry = entries.find(e => e.id == id);
+    
+    if (!entry) return;
+    
+    const modal = document.getElementById('entry-modal');
+    if (modal) {
+        document.getElementById('modal-title').textContent = entry.title;
+        document.getElementById('modal-category').textContent = entry.category;
+        document.getElementById('modal-content').innerHTML = entry.content.replace(/\n/g, '<br>');
+        document.getElementById('modal-date').textContent = formatDate(entry.date);
+        
+        // Show edit/delete buttons if authenticated
+        const isAuthenticated = localStorage.getItem('keture_authenticated') === 'true';
+        const editBtn = document.getElementById('modal-edit');
+        const deleteBtn = document.getElementById('modal-delete');
+        
+        if (editBtn) editBtn.style.display = isAuthenticated ? 'flex' : 'none';
+        if (deleteBtn) deleteBtn.style.display = isAuthenticated ? 'flex' : 'none';
+        
+        // Set up edit/delete functionality
+        if (isAuthenticated) {
+            editBtn.onclick = function() { editEntry(entry.id); };
+            deleteBtn.onclick = function() { deleteEntry(entry.id); };
+        }
+        
+        modal.style.display = 'flex';
+    }
+}
+
+function editEntry(id) {
+    const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+    const entry = entries.find(e => e.id == id);
+    
+    if (!entry) return;
+    
+    // Remove any existing form
+    const existingForm = document.getElementById('entry-form-modal');
+    if (existingForm) existingForm.remove();
+    
+    // Create edit form modal
+    const formHTML = `
+        <div id="entry-form-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1001;display:flex;align-items:center;justify-content:center;">
+            <div style="background:var(--vogue-white);padding:3rem;max-width:500px;width:90%;border-radius:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                    <h3 style="font-family:var(--font-serif);color:var(--coffee-dark);">Edit Entry</h3>
+                    <button onclick="document.getElementById('entry-form-modal').remove()" style="background:none;border:none;font-size:1.5rem;color:var(--vogue-gray);cursor:pointer;">&times;</button>
+                </div>
+                
+                <form id="edit-entry-form" style="display:flex;flex-direction:column;gap:1.5rem;">
+                    <div>
+                        <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Entry Title</label>
+                        <input type="text" id="edit-entry-title" value="${entry.title}" required style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                    </div>
+                    
+                    <div>
+                        <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Category</label>
+                        <select id="edit-entry-category" required style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;border-radius:4px;">
+                            <option value="fashion" ${entry.category === 'fashion' ? 'selected' : ''}>Fashion</option>
+                            <option value="culture" ${entry.category === 'culture' ? 'selected' : ''}>Culture</option>
+                            <option value="music" ${entry.category === 'music' ? 'selected' : ''}>Sound</option>
+                            <option value="poetry" ${entry.category === 'poetry' ? 'selected' : ''}>Poetry</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label style="display:block;margin-bottom:0.5rem;color:var(--coffee-medium);font-size:0.9rem;">Content</label>
+                        <textarea id="edit-entry-content" required rows="6" style="width:100%;padding:12px;border:1px solid var(--vogue-border);font-size:1rem;resize:vertical;border-radius:4px;">${entry.content}</textarea>
+                        <div style="font-size:0.8rem;color:var(--vogue-gray);margin-top:0.5rem;">Word count: <span id="edit-form-word-count">${entry.content.trim() ? entry.content.trim().split(/\s+/).length : 0}</span></div>
+                    </div>
+                    
+                    <div style="display:flex;gap:1rem;margin-top:1rem;">
+                        <button type="button" onclick="document.getElementById('entry-form-modal').remove()" style="flex:1;padding:12px;background:var(--vogue-light-gray);border:1px solid var(--vogue-border);color:var(--vogue-black);cursor:pointer;border-radius:4px;">Cancel</button>
+                        <button type="submit" style="flex:1;padding:12px;background:var(--coffee-dark);border:none;color:white;cursor:pointer;border-radius:4px;">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', formHTML);
+    closeModal();
+    
+    // Add word count functionality
+    const textarea = document.getElementById('edit-entry-content');
+    const wordCountSpan = document.getElementById('edit-form-word-count');
+    
+    textarea.addEventListener('input', function() {
+        const text = this.value.trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        wordCountSpan.textContent = words;
+    });
+    
+    // Handle form submission
+    document.getElementById('edit-entry-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const title = document.getElementById('edit-entry-title').value;
+        const category = document.getElementById('edit-entry-category').value;
+        const content = document.getElementById('edit-entry-content').value;
+        
+        if (title && category && content) {
+            const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+            const index = entries.findIndex(e => e.id == id);
+            
+            if (index !== -1) {
+                entries[index] = {
+                    ...entries[index],
+                    title: title,
+                    category: category.toLowerCase(),
+                    content: content,
+                    date: new Date().toISOString() // Update date when edited
+                };
+                
+                localStorage.setItem('keture_entries', JSON.stringify(entries));
+                
+                loadEntries();
+                updateStats();
+                document.getElementById('entry-form-modal').remove();
+                showNotification('Entry updated successfully!', 'success');
+            }
+        } else {
+            showNotification('Please fill in all fields', 'error');
+        }
+    });
+    
+    // Focus on title field
+    setTimeout(() => document.getElementById('edit-entry-title').focus(), 100);
+}
+
+function deleteEntry(id) {
+    if (!confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+        return;
     }
     
-    // Mood selector for new entry page
-    const moodButtons = document.querySelectorAll('.mood-option');
-    const selectedMoodInput = document.getElementById('selected-mood');
+    const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+    const filteredEntries = entries.filter(e => e.id != id);
     
-    if (moodButtons.length > 0 && selectedMoodInput) {
-        moodButtons.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove active class from all mood options
-                moodButtons.forEach(btn => btn.classList.remove('active'));
-                // Add active class to clicked option
-                this.classList.add('active');
-                // Update hidden input
-                selected
+    localStorage.setItem('keture_entries', JSON.stringify(filteredEntries));
+    
+    loadEntries();
+    updateStats();
+    closeModal();
+    showNotification('Entry deleted', 'info');
+}
+
+function closeModal() {
+    const modal = document.getElementById('entry-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (days === 0) return 'Today';
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return `${days} days ago`;
+    if (days < 30) return `${Math.floor(days/7)} weeks ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existing = document.querySelector('.notification');
+    if (existing) existing.remove();
+    
+    // Create notification
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;margin-left:1rem;">&times;</button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show with animation
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
+// Export/Import functionality
+function exportAllData() {
+    const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+    
+    const allData = {
+        entries: entries,
+        exportedAt: new Date().toISOString(),
+        version: '1.0'
+    };
+    
+    const dataStr = JSON.stringify(allData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const fileName = `keture-backup-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const link = document.createElement('a');
+    link.setAttribute('href', dataUri);
+    link.setAttribute('download', fileName);
+    link.click();
+    
+    showNotification('Backup downloaded successfully', 'success');
+}
+
+function importAllData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            
+            if (confirm(`Import ${data.entries?.length || 0} entries? This will replace your current data.`)) {
+                if (data.entries) {
+                    localStorage.setItem('keture_entries', JSON.stringify(data.entries));
+                    loadEntries();
+                    updateStats();
+                    showNotification('Data imported successfully', 'success');
+                }
+            }
+        } catch (error) {
+            showNotification('Error importing data. Invalid file format.', 'error');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Make functions available globally
+window.viewEntry = viewEntry;
+window.editEntry = editEntry;
+window.deleteEntry = deleteEntry;
+window.closeModal = closeModal;
+window.exportAllData = exportAllData;
+window.importAllData = importAllData;
+window.createNewEntry = createNewEntry;
