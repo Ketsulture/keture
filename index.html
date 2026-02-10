@@ -192,6 +192,18 @@
         .thought-preview {
             color: var(--coffee-dark); line-height: 1.6;
             margin-bottom: 1.5rem; font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .thought-full {
+            color: var(--coffee-dark); line-height: 1.6;
+            margin-bottom: 1.5rem; font-size: 0.95rem;
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
+            padding-top: 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .thought-footer {
             display: flex; justify-content: space-between;
@@ -343,7 +355,7 @@
 
             <!-- Studio Link -->
             <div class="studio-link">
-                <a href="visions.html">
+                <a href="#visions" onclick="showVisions()">
                     <i class="fas fa-film"></i> Studio Archive
                 </a>
             </div>
@@ -378,7 +390,7 @@
                 </div>
                 <div class="thought-footer">
                     <span class="thought-date">Today</span>
-                    <button class="thought-view">View</button>
+                    <button class="thought-toggle">Expand</button>
                 </div>
             </div>
         </main>
@@ -408,6 +420,19 @@
             </div>
         </div>
         
+        <!-- Visions Section (hidden by default) -->
+        <div id="visions-section" style="display: none; margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--vogue-border);">
+            <h2 style="font-family: var(--font-serif); color: var(--coffee-dark); margin-bottom: 2rem; text-align: center;">Studio Archive</h2>
+            <div id="visions-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+                <!-- Visions will be loaded here -->
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <button id="add-vision-btn" style="padding: 12px 24px; background: var(--coffee-cream); border: 1px solid var(--coffee-light); color: var(--coffee-medium); cursor: pointer;">
+                    <i class="fas fa-plus"></i> Add Vision
+                </button>
+            </div>
+        </div>
+        
         <!-- Backup Section -->
         <div style="text-align:center;margin:3rem 0;padding-top:2rem;border-top:1px solid var(--vogue-border);">
             <button onclick="exportAllData()" style="padding:10px 20px;margin:0 8px;background:var(--coffee-cream);border:1px solid var(--coffee-light);color:var(--coffee-medium);cursor:pointer;">
@@ -425,7 +450,7 @@
 
     <script>
         // ===== CONFIGURATION =====
-        const PASSWORD = "keture2024";
+        const PASSWORD = "CHANGE_THIS_TO_A_SECURE_PASSWORD"; // ⚠️ CHANGE THIS!
         const STORAGE_KEYS = {
             ENTRIES: 'keture_entries',
             VISIONS: 'keture_visions',
@@ -446,6 +471,7 @@
         function initArchive() {
             // Load data
             loadEntries();
+            loadVisions();
             updateStats();
             
             // Setup event listeners
@@ -475,6 +501,11 @@
                 if (checkAuth()) createNewEntry();
             });
             
+            // Setup visions button
+            document.getElementById('add-vision-btn').addEventListener('click', () => {
+                if (checkAuth()) createNewVision();
+            });
+            
             // Update edit mode UI
             updateEditModeUI(localStorage.getItem(STORAGE_KEYS.AUTH) === 'true');
         }
@@ -490,20 +521,45 @@
             }
             
             container.innerHTML = entries.map(entry => `
-                <div class="thought-card" data-category="${entry.category}" data-date="${entry.date}">
+                <div class="thought-card" data-category="${entry.category}" data-date="${entry.date}" id="entry-${entry.id}">
                     <div class="thought-header">
                         <h3 class="thought-title">${entry.title}</h3>
                         <span class="thought-category">${entry.category}</span>
                     </div>
-                    <div class="thought-preview">
+                    <div class="thought-preview" id="preview-${entry.id}">
                         ${entry.content.substring(0, 150)}${entry.content.length > 150 ? '...' : ''}
+                    </div>
+                    <div class="thought-full" id="full-${entry.id}" style="display:none;">
+                        ${entry.content.replace(/\n/g, '<br>')}
                     </div>
                     <div class="thought-footer">
                         <span class="thought-date">${formatDate(entry.date)}</span>
-                        <button class="thought-view" onclick="viewEntry('${entry.id}')">View</button>
+                        <button class="thought-toggle" onclick="toggleEntry('${entry.id}')">Expand</button>
                     </div>
                 </div>
             `).join('');
+        }
+        
+        function loadVisions() {
+            const visions = JSON.parse(localStorage.getItem(STORAGE_KEYS.VISIONS) || '[]');
+            const container = document.getElementById('visions-container');
+            
+            if (container && visions.length > 0) {
+                container.innerHTML = visions.map(vision => `
+                    <div class="thought-card">
+                        <div class="thought-header">
+                            <h3 class="thought-title">${vision.title}</h3>
+                            <span class="thought-category">Vision</span>
+                        </div>
+                        <div class="thought-preview">
+                            ${vision.description.substring(0, 100)}${vision.description.length > 100 ? '...' : ''}
+                        </div>
+                        <div class="thought-footer">
+                            <span class="thought-date">${formatDate(vision.date)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
         
         function updateStats() {
@@ -600,38 +656,60 @@
             }
         }
         
-        function viewEntry(id) {
-            const entries = JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '[]');
-            const entry = entries.find(e => e.id == id);
+        function toggleEntry(id) {
+            const preview = document.getElementById(`preview-${id}`);
+            const full = document.getElementById(`full-${id}`);
+            const button = document.querySelector(`#entry-${id} .thought-toggle`);
             
-            if (entry) {
-                const modal = `
-                    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;">
-                        <div style="background:var(--vogue-white);padding:3rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;">
-                            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:2rem;">
-                                <div>
-                                    <h2 style="font-family:var(--font-serif);color:var(--coffee-dark);margin-bottom:0.5rem;">${entry.title}</h2>
-                                    <span style="background:rgba(139,115,85,0.1);color:var(--coffee-medium);padding:4px 12px;font-size:0.8rem;">${entry.category}</span>
-                                </div>
-                                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:none;border:none;font-size:1.5rem;color:var(--vogue-gray);cursor:pointer;">&times;</button>
-                            </div>
-                            <div style="color:var(--coffee-dark);line-height:1.6;margin-bottom:2rem;">
-                                ${entry.content.replace(/\n/g, '<br>')}
-                            </div>
-                            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid var(--vogue-border);">
-                                <span style="color:var(--coffee-medium);font-size:0.9rem;">${formatDate(entry.date)}</span>
-                                ${localStorage.getItem(STORAGE_KEYS.AUTH) === 'true' ? `
-                                    <div>
-                                        <button onclick="editEntry('${entry.id}')" style="padding:8px 16px;margin-left:8px;background:var(--coffee-dark);color:white;border:none;cursor:pointer;">Edit</button>
-                                        <button onclick="deleteEntry('${entry.id}')" style="padding:8px 16px;margin-left:8px;background:#dc3545;color:white;border:none;cursor:pointer;">Delete</button>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
+            if (full.style.display === 'none') {
+                preview.style.display = 'none';
+                full.style.display = 'block';
+                button.textContent = 'Collapse';
+            } else {
+                preview.style.display = 'block';
+                full.style.display = 'none';
+                button.textContent = 'Expand';
+            }
+        }
+        
+        // ===== VISIONS MANAGEMENT =====
+        function showVisions() {
+            const visionsSection = document.getElementById('visions-section');
+            const mainContent = document.getElementById('main-content');
+            
+            if (visionsSection.style.display === 'none') {
+                visionsSection.style.display = 'block';
+                mainContent.style.display = 'none';
+                document.querySelector('.archive-meta').style.display = 'none';
+                showNotification('Studio Archive', 'info');
+            } else {
+                visionsSection.style.display = 'none';
+                mainContent.style.display = 'grid';
+                document.querySelector('.archive-meta').style.display = 'grid';
+            }
+        }
+        
+        function createNewVision() {
+            const title = prompt('Vision title:');
+            if (!title) return;
+            
+            const description = prompt('Vision description:');
+            
+            if (title && description) {
+                const newVision = {
+                    id: Date.now(),
+                    title: title,
+                    description: description,
+                    date: new Date().toISOString(),
+                    type: 'vision'
+                };
                 
-                document.body.insertAdjacentHTML('beforeend', modal);
+                const visions = JSON.parse(localStorage.getItem(STORAGE_KEYS.VISIONS) || '[]');
+                visions.push(newVision);
+                localStorage.setItem(STORAGE_KEYS.VISIONS, JSON.stringify(visions));
+                
+                loadVisions();
+                showNotification('Vision added', 'success');
             }
         }
         
@@ -727,6 +805,7 @@
                         if (data.visions) localStorage.setItem(STORAGE_KEYS.VISIONS, JSON.stringify(data.visions));
                         
                         loadEntries();
+                        loadVisions();
                         updateStats();
                         showNotification('Data imported successfully', 'success');
                     }
@@ -769,7 +848,8 @@
         }
         
         // Make functions available globally
-        window.viewEntry = viewEntry;
+        window.toggleEntry = toggleEntry;
+        window.showVisions = showVisions;
         window.exportAllData = exportAllData;
         window.importAllData = importAllData;
     </script>
