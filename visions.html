@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio | KETURE</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="KETURE Studio: Archive of visions, manifestos, and future states.">
+    <meta name="keywords" content="visions, manifestos, studio, creative, archive, future">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%235c4033%22>S</text></svg>">
+    
+    <style>
+        /* ===== STUDIO BASE ===== */
+        :root {
+            --studio-black: #1a1a1a;
+            --studio-white: #fefefe;
+            --studio-gray: #666;
+            --studio-light: #f8f8f8;
+            --studio-border: #ddd;
+            --studio-accent: #8b7355;
+            --studio-cream: #f5f1e8;
+            --studio-grid: #e8e4dc;
+            --font-studio: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-studio);
+            background: var(--studio-cream);
+            color: var(--studio-black);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .studio-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        /* ===== STUDIO GRID OVERLAY ===== */
+        .studio-grid-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(to right, var(--studio-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--studio-grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.03;
+            z-index: -1;
+        }
+        
+        /* ===== STUDIO HEADER ===== */
+        .studio-header {
+            text-align: center; padding: 4rem 0 3rem;
+            position: relative; margin-bottom: 3rem;
+        }
+        .studio-back {
+            position: absolute; left: 0; top: 4rem;
+            color: var(--studio-gray); text-decoration: none;
+            font-size: 0.85rem; letter-spacing: 1.5px;
+            text-transform: uppercase; display: flex;
+            align-items: center; gap: 8px; padding: 8px 16px;
+            border: 1px solid transparent; transition: all 0.3s ease;
+        }
+        .studio-back:hover {
+            color: var(--studio-black); border: 1px solid var(--studio-border);
+            background: var(--studio-white);
+        }
+        .studio-title {
+            font-family: var(--font-display); font-size: 3rem;
+            font-weight: 400; letter-spacing: 3px;
+            margin-bottom: 0.5rem; color: var(--studio-black);
+            position: relative; display: inline-block;
+        }
+        .studio-title::after {
+            content: ''; position: absolute; bottom: -10px;
+            left: 50%; transform: translateX(-50%);
+            width: 60px; height: 2px; background: var(--studio-accent);
+        }
+        .studio-tagline {
+            color: var(--studio-gray); font-size: 0.95rem;
+            letter-spacing: 1px; margin-top: 1.5rem;
+            font-style: italic;
+        }
+        
+        /* ===== STUDIO REELS ===== */
+        .studio-reels {
+            display: flex; justify-content: center; gap: 0;
+            margin-bottom: 4rem; position: relative;
+        }
+        .studio-reels::before {
+            content: ''; position: absolute; top: 50%;
+            left: 0; right: 0; height: 1px;
+            background: var(--studio-grid); z-index: 1;
+        }
+        .reel-tab {
+            padding: 14px 28px; background: var(--studio-white);
+            border: 1px solid var(--studio-border); color: var(--studio-gray);
+            font-size: 0.85rem; letter-spacing: 2px;
+            text-transform: uppercase; cursor: pointer;
+            position: relative; z-index: 2; transition: all 0.3s ease;
+            margin: 0 -1px;
+        }
+        .reel-tab:hover {
+            color: var(--studio-black); border-color: var(--studio-black);
+            transform: translateY(-2px); z-index: 3;
+        }
+        .reel-tab.active {
+            color: var(--studio-white); background: var(--studio-black);
+            border-color: var(--studio-black); z-index: 3;
+        }
+        
+        /* ===== STUDIO BOARD ===== */
+        .studio-board {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem; margin-bottom: 5rem;
+        }
+        .vision-card {
+            background: var(--studio-white); border: 1px solid var(--studio-border);
+            padding: 2.5rem; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        .vision-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--studio-accent) 0%, transparent 100%);
+            transform: translateX(-100%); transition: transform 0.6s ease;
+        }
+        .vision-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--studio-black);
+        }
+        .vision-card:hover::before { transform: translateX(0); }
+        .vision-header {
+            margin-bottom: 1.5rem; padding-bottom: 1rem;
+            border-bottom: 1px solid var(--studio-light);
+        }
+        .vision-title {
+            font-family: var(--font-display); font-size: 1.4rem;
+            color: var(--studio-black); margin-bottom: 1rem;
+            line-height: 1.3; font-weight: 500;
+        }
+        .vision-type {
+            display: inline-block; padding: 6px 16px;
+            background: var(--studio-cream); color: var(--studio-accent);
+            font-size: 0.75rem; letter-spacing: 2px;
+            text-transform: uppercase; border: 1px solid var(--studio-accent);
+        }
+        .vision-content {
+            color: var(--studio-black); line-height: 1.7;
+            font-size: 0.95rem; margin-bottom: 2rem;
+            min-height: 120px;
+        }
+        .vision-footer {
+            display: flex; justify-content: space-between;
+            align-items: center; padding-top: 1.5rem;
+            border-top: 1px solid var(--studio-light);
+        }
+        .vision-timeline {
+            font-size: 0.8rem; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--studio-accent);
+            font-weight: 500;
+        }
+        .vision-progress {
+            display: flex; gap: 8px;
+        }
+        .progress-pill {
+            padding: 6px 16px; background: var(--studio-cream);
+            border: 1px solid var(--studio-border); color: var(--studio-gray);
+            font-size: 0.75rem; letter-spacing: 1.5px;
+            text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .progress-pill:hover {
+            background: var(--studio-black); color: var(--studio-white);
+            border-color: var(--studio-black);
+        }
+        
+        /* ===== STUDIO SKETCHBOOK ===== */
+        .studio-sketchbook {
+            background: var(--studio-white); padding: 3rem;
+            border: 1px solid var(--studio-border); margin-bottom: 4rem;
+        }
+        .sketchbook-title {
+            font-family: var(--font-display); font-size: 1.5rem;
+            margin-bottom: 2rem; color: var(--studio-black);
+            font-weight: 500;
+        }
+        .sketchbook-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        @media (max-width: 768px) {
+            .sketchbook-grid { grid-template-columns: 1fr; }
+        }
+        .sketchbook-input {
+            width: 100%; padding: 1rem; border: none;
+            border-bottom: 2px solid var(--studio-light); font-size: 1rem;
+            background: transparent; font-family: var(--font-studio);
+            color: var(--studio-black); transition: border 0.3s ease;
+        }
+        .sketchbook-input:focus {
+            outline: none; border-bottom-color: var(--studio-accent);
+        }
+        .sketchbook-textarea {
+            grid-column: 1 / -1; min-height: 150px;
+            resize: vertical; border: 1px solid var(--studio-light);
+            padding: 1rem; font-family: var(--font-studio);
+            color: var(--studio-black); transition: border 0.3s ease;
+        }
+        .sketchbook-textarea:focus {
+            outline: none; border-color: var(--studio-accent);
+        }
+        .sketchbook-meta { display: flex; gap: 1rem; }
+        .sketchbook-select {
+            flex: 1; padding: 1rem; border: 1px solid var(--studio-light);
+            background: var(--studio-white); color: var(--studio-black);
+            font-size: 0.9rem; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer;
+        }
+        .sketchbook-select:focus { outline: none; border-color: var(--studio-accent); }
+        .sketchbook-submit {
+            padding: 1rem 2.5rem; background: var(--studio-black);
+            color: var(--studio-white); border: none; font-size: 0.85rem;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease; margin-top: 1rem;
+        }
+        .sketchbook-submit:hover {
+            background: var(--studio-accent); transform: translateY(-2px);
+        }
+        
+        /* ===== STUDIO CONTROLS ===== */
+        .studio-controls {
+            position: fixed; top: 24px; right: 24px;
+            z-index: 100; display: flex; gap: 12px;
+        }
+        .studio-access {
+            background: var(--studio-white); border: 1px solid var(--studio-border);
+            color: var(--studio-gray); padding: 8px 16px;
+            font-size: 0.8rem; letter-spacing: 1.5px;
+            text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .studio-access:hover {
+            color: var(--studio-black); border-color: var(--studio-black);
+        }
+        
+        /* ===== MODALS & NOTIFICATIONS ===== */
+        .studio-modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(26, 26, 26, 0.95);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--studio-white); padding: 3rem;
+            max-width: 400px; width: 90%; text-align: center;
+            border: 1px solid var(--studio-border);
+        }
+        .modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .modal-actions button {
+            flex: 1; padding: 1rem; border: 1px solid var(--studio-border);
+            background: var(--studio-white); color: var(--studio-black);
+            font-size: 0.85rem; letter-spacing: 1.5px;
+            text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .modal-actions button:hover {
+            background: var(--studio-black); color: var(--studio-white);
+            border-color: var(--studio-black);
+        }
+        .studio-notification {
+            position: fixed; top: 20px; right: 20px;
+            padding: 1rem 1.5rem; background: var(--studio-black);
+            color: var(--studio-white); min-width: 300px;
+            max-width: 400px; z-index: 9999;
+            transform: translateX(400px); transition: transform 0.3s ease;
+            border-left: 3px solid var(--studio-accent);
+        }
+        .studio-notification.show { transform: translateX(0); }
+        
+        /* ===== MOBILE OPTIMIZATION ===== */
+        @media (max-width: 768px) {
+            .studio-container { padding: 1rem; }
+            .studio-title { font-size: 2.2rem; }
+            .studio-reels { flex-wrap: wrap; }
+            .reel-tab { padding: 12px 20px; font-size: 0.8rem; }
+            .studio-board { grid-template-columns: 1fr; gap: 2rem; }
+            .vision-card { padding: 2rem; }
+            .studio-back {
+                position: relative; top: 0;
+                justify-content: center; margin-bottom: 1rem;
+            }
+            .studio-controls { top: 16px; right: 16px; }
+            
+            /* Touch targets */
+            button, .reel-tab, .progress-pill, .studio-access {
+                min-height: 44px; min-width: 44px;
+            }
+            input, select, textarea { font-size: 16px !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Studio Grid Overlay -->
+    <div class="studio-grid-overlay"></div>
+    
+    <!-- Studio Controls -->
+    <div class="studio-controls">
+        <button id="studio-access-toggle" class="studio-access">
+            <i class="fas fa-key"></i> Access
+        </button>
+    </div>
+
+    <!-- Studio Modal -->
+    <div class="studio-modal" id="studio-modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-unlock-alt"></i> Studio Access</h3>
+            <p>Enter passcode to modify visions</p>
+            <input type="password" id="studio-password" placeholder="Enter studio passcode">
+            <div class="modal-actions">
+                <button id="studio-cancel">Return</button>
+                <button id="studio-submit">Access Studio</button>
+            </div>
+            <p style="font-size:0.8rem;color:var(--studio-gray);margin-top:1.5rem;">
+                Visions are archived studio material
+            </p>
+        </div>
+    </div>
+
+    <div class="studio-container">
+        <!-- Studio Header -->
+        <header class="studio-header">
+            <a href="index.html" class="studio-back">
+                <i class="fas fa-arrow-left"></i> Main Archive
+            </a>
+            <h1 class="studio-title">STUDIO</h1>
+            <p class="studio-tagline">Visions · Manifestos · Future States</p>
+        </header>
+
+        <!-- Studio Reels -->
+        <div class="studio-reels">
+            <button class="reel-tab active" data-type="all">All Visions</button>
+            <button class="reel-tab" data-type="aspirations">Ambitions</button>
+            <button class="reel-tab" data-type="projects">Productions</button>
+            <button class="reel-tab" data-type="skills">Craft</button>
+            <button class="reel-tab" data-type="embodiments">Personas</button>
+        </div>
+
+        <!-- Studio Board -->
+        <div class="studio-board" id="studio-board">
+            <!-- Vision cards loaded here -->
+        </div>
+
+        <!-- Studio Sketchbook -->
+        <div class="studio-sketchbook">
+            <h3 class="sketchbook-title">Sketchbook</h3>
+            <div class="sketchbook-grid">
+                <input type="text" id="vision-title" class="sketchbook-input" placeholder="Vision Title">
+                <div class="sketchbook-meta">
+                    <select id="vision-type" class="sketchbook-select">
+                        <option value="aspirations">Ambition</option>
+                        <option value="projects">Production</option>
+                        <option value="skills">Craft</option>
+                        <option value="embodiments">Persona</option>
+                    </select>
+                    <select id="vision-timeline" class="sketchbook-select">
+                        <option value="2024">Present</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">Beyond</option>
+                    </select>
+                </div>
+                <textarea id="vision-description" class="sketchbook-textarea" placeholder="Describe your vision..."></textarea>
+                <button id="save-vision" class="sketchbook-submit">
+                    <i class="fas fa-plus"></i> Archive Vision
+                </button>
+            </div>
+        </div>
+        
+        <!-- Backup Section -->
+        <div style="text-align:center;margin:3rem 0;padding-top:2rem;border-top:1px solid var(--studio-border);">
+            <button onclick="exportAllData()" style="padding:10px 20px;margin:0 8px;background:var(--studio-cream);border:1px solid var(--studio-accent);color:var(--studio-accent);cursor:pointer;">
+                <i class="fas fa-download"></i> Backup
+            </button>
+            <label style="padding:10px 20px;margin:0 8px;background:var(--studio-cream);border:1px solid var(--studio-accent);color:var(--studio-accent);cursor:pointer;">
+                <i class="fas fa-upload"></i> Restore
+                <input type="file" accept=".json" onchange="importAllData(event)" style="display:none;">
+            </label>
+            <p style="font-size:0.8rem;color:var(--studio-gray);margin-top:1rem;">
+                Export/Import all studio visions
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        const STUDIO_PASSWORD = "keture2024";
+        const STORAGE_KEY = 'keture_visions';
+        const AUTH_KEY = 'keture_authenticated';
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initStudio();
+                showStudioNotification('Studio loaded', 'info');
+            } catch (error) {
+                console.error('Studio initialization error:', error);
+                showStudioNotification('Failed to load studio', 'error');
+            }
+        });
+        
+        function initStudio() {
+            loadVisions();
+            setupStudioReels();
+            setupStudioForm();
+            setupStudioAccess();
+            
+            // Fix back button
+            document.querySelector('.studio-back').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'index.html';
+            });
+            
+            // Update access UI
+            updateAccessUI(localStorage.getItem(AUTH_KEY) === 'true');
+        }
+        
+        // ===== VISION MANAGEMENT =====
+        function loadVisions() {
+            const visions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const container = document.getElementById('studio-board');
+            
+            if (!container) return;
+            
+            if (visions.length === 0) {
+                container.innerHTML = `
+                    <div class="vision-card" style="grid-column:1/-1;text-align:center;padding:4rem;">
+                        <i class="fas fa-palette" style="font-size:3rem;color:var(--studio-gray);margin-bottom:1.5rem;opacity:0.5;"></i>
+                        <h3 style="font-family:var(--font-display);color:var(--studio-black);margin-bottom:0.5rem;">Empty Studio</h3>
+                        <p style="color:var(--studio-gray);">No visions archived. Begin by documenting your future states.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = visions.map(vision => createVisionCardHTML(vision)).join('');
+        }
+        
+        function createVisionCardHTML(vision) {
+            const typeLabels = {
+                'aspirations': 'Ambition',
+                'projects': 'Production',
+                'skills': 'Craft',
+                'embodiments': 'Persona'
+            };
+            
+            const timelineLabels = {
+                '2024': 'Present',
+                '2025': '2025',
+                '2026': '2026',
+                '2027': 'Beyond'
+            };
+            
+            const progressLabels = {
+                'seed': 'Concept',
+                'growing': 'Development',
+                'blooming': 'Realized'
+            };
+            
+            return `
+                <div class="vision-card" data-type="${vision.type}" data-timeline="${vision.timeline}">
+                    <div class="vision-header">
+                        <h3 class="vision-title">${vision.title}</h3>
+                        <span class="vision-type">${typeLabels[vision.type] || vision.type}</span>
+                    </div>
+                    <div class="vision-content">
+                        ${vision.description}
+                    </div>
+                    <div class="vision-footer">
+                        <span class="vision-timeline">${timelineLabels[vision.timeline] || vision.timeline}</span>
+                        <div class="vision-progress">
+                            <button class="progress-pill" onclick="updateVisionProgress(${vision.id}, 'seed')">
+                                ${progressLabels.seed}
+                            </button>
+                            <button class="progress-pill" onclick="updateVisionProgress(${vision.id}, 'growing')">
+                                ${progressLabels.growing}
+                            </button>
+                            <button class="progress-pill" onclick="updateVisionProgress(${vision.id}, 'blooming')">
+                                ${progressLabels.blooming}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ===== FILTERING =====
+        function setupStudioReels() {
+            document.querySelectorAll('.reel-tab').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.reel-tab').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterVisions(this.dataset.type);
+                });
+            });
+        }
+        
+        function filterVisions(type) {
+            const cards = document.querySelectorAll('.vision-card');
+            cards.forEach(card => {
+                card.style.display = type === 'all' || card.dataset.type === type ? 'block' : 'none';
+            });
+        }
+        
+        // ===== FORM HANDLING =====
+        function setupStudioForm() {
+            document.getElementById('save-vision').addEventListener('click', function() {
+                if (!checkStudioAuth()) return;
+                
+                const title = document.getElementById('vision-title').value.trim();
+                const description = document.getElementById('vision-description').value.trim();
+                const type = document.getElementById('vision-type').value;
+                const timeline = document.getElementById('vision-timeline').value;
+                
+                if (!title || !description) {
+                    showStudioNotification('Complete all fields', 'error');
+                    return;
+                }
+                
+                const vision = {
+                    id: Date.now(),
+                    title: title,
+                    description: description,
+                    type: type,
+                    timeline: timeline,
+                    progress: 'seed',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                const visions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                visions.push(vision);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(visions));
+                
+                // Clear form
+                document.getElementById('vision-title').value = '';
+                document.getElementById('vision-description').value = '';
+                
+                // Reload
+                loadVisions();
+                showStudioNotification(`"${title}" archived`, 'success');
+            });
+        }
+        
+        function updateVisionProgress(id, progress) {
+            if (!checkStudioAuth()) return;
+            
+            const visions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const index = visions.findIndex(v => v.id === id);
+            
+            if (index !== -1) {
+                visions[index].progress = progress;
+                visions[index].updatedAt = new Date().toISOString();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(visions));
+                
+                const labels = { 'seed': 'Concept', 'growing': 'Development', 'blooming': 'Realized' };
+                showStudioNotification(`Marked as ${labels[progress]}`, 'info');
+                loadVisions();
+            }
+        }
+        
+        // ===== AUTHENTICATION =====
+        function setupStudioAccess() {
+            document.getElementById('studio-access-toggle').addEventListener('click', toggleStudioAccess);
+            document.getElementById('studio-submit').addEventListener('click', submitStudioPassword);
+            document.getElementById('studio-cancel').addEventListener('click', () => {
+                document.getElementById('studio-modal').style.display = 'none';
+            });
+            
+            // Close modal on outside click
+            document.getElementById('studio-modal').addEventListener('click', function(e) {
+                if (e.target === this) this.style.display = 'none';
+            });
+        }
+        
+        function toggleStudioAccess() {
+            const hasAccess = localStorage.getItem(AUTH_KEY) === 'true';
+            
+            if (hasAccess) {
+                localStorage.setItem(AUTH_KEY, 'false');
+                updateAccessUI(false);
+                showStudioNotification('Studio access revoked', 'info');
+            } else {
+                document.getElementById('studio-modal').style.display = 'flex';
+                document.getElementById('studio-password').focus();
+            }
+        }
+        
+        function submitStudioPassword() {
+            const input = document.getElementById('studio-password');
+            if (input.value === STUDIO_PASSWORD) {
+                localStorage.setItem(AUTH_KEY, 'true');
+                updateAccessUI(true);
+                document.getElementById('studio-modal').style.display = 'none';
+                input.value = '';
+                showStudioNotification('Studio access granted', 'success');
+            } else {
+                showStudioNotification('Incorrect passcode', 'error');
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        function checkStudioAuth() {
+            const hasAccess = localStorage.getItem(AUTH_KEY) === 'true';
+            if (!hasAccess) {
+                showStudioNotification('Studio access required', 'error');
+                document.getElementById('studio-modal').style.display = 'flex';
+                document.getElementById('studio-password').focus();
+                return false;
+            }
+            return true;
+        }
+        
+        function updateAccessUI(hasAccess) {
+            const btn = document.getElementById('studio-access-toggle');
+            if (hasAccess) {
+                btn.innerHTML = '<i class="fas fa-unlock"></i> Lock';
+                btn.style.color = 'var(--studio-black)';
+                btn.style.borderColor = 'var(--studio-black)';
+            } else {
+                btn.innerHTML = '<i class="fas fa-key"></i> Access';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }
+        }
+        
+        // ===== BACKUP SYSTEM =====
+        function exportAllData() {
+            const entries = JSON.parse(localStorage.getItem('keture_entries') || '[]');
+            const visions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            
+            const allData = {
+                entries: entries,
+                visions: visions,
+                exportedAt: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const fileName = `keture-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', fileName);
+            link.click();
+            
+            showStudioNotification('Backup downloaded', 'success');
+        }
+        
+        function importAllData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm(`Import ${data.visions?.length || 0} visions?`)) {
+                        if (data.visions) localStorage.setItem(STORAGE_KEY, JSON.stringify(data.visions));
+                        loadVisions();
+                        showStudioNotification('Visions imported', 'success');
+                    }
+                } catch (error) {
+                    showStudioNotification('Error importing data', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // ===== UTILITIES =====
+        function showStudioNotification(message, type = 'info') {
+            const existing = document.querySelector('.studio-notification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = `studio-notification`;
+            notification.style.borderLeftColor = type === 'error' ? '#dc3545' : 
+                                              type === 'success' ? '#28a745' : 
+                                              'var(--studio-accent)';
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;margin-left:1rem;">&times;</button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Make functions globally available
+        window.updateVisionProgress = updateVisionProgress;
+        window.exportAllData = exportAllData;
+        window.importAllData = importAllData;
+    </script>
+</body>
+</html>
