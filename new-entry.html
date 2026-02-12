@@ -605,13 +605,9 @@
                 window.location.href = 'index.html';
             }
             
-            // Initialize form
+            // Initialize everything
             initForm();
-            
-            // Initialize rich editor
             initRichEditor();
-            
-            // Setup image upload
             setupImageUpload();
         });
         
@@ -717,6 +713,9 @@
             // Set initial content if any
             if (hiddenTextarea.value) {
                 editor.innerHTML = hiddenTextarea.value;
+            } else {
+                editor.innerHTML = '';
+                hiddenTextarea.value = '';
             }
             
             // Event listeners
@@ -728,10 +727,15 @@
             
             editor.addEventListener('keyup', function() {
                 updateActiveButtons();
+                hiddenTextarea.value = editor.innerHTML;
             });
             
             editor.addEventListener('mouseup', function() {
                 updateEditorStatus();
+                updateActiveButtons();
+            });
+            
+            editor.addEventListener('focus', function() {
                 updateActiveButtons();
             });
             
@@ -780,6 +784,10 @@
             updateEditorStatus();
             updateWordCount();
             updateActiveButtons();
+            
+            // Update hidden textarea
+            const hiddenTextarea = document.getElementById('entry-content');
+            hiddenTextarea.value = editor.innerHTML;
         }
         
         function insertLink() {
@@ -789,6 +797,11 @@
                 updateEditorStatus();
                 updateWordCount();
                 updateActiveButtons();
+                
+                // Update hidden textarea
+                const editor = document.getElementById('rich-editor');
+                const hiddenTextarea = document.getElementById('entry-content');
+                hiddenTextarea.value = editor.innerHTML;
             }
         }
         
@@ -805,6 +818,11 @@
                         updateEditorStatus();
                         updateWordCount();
                         updateActiveButtons();
+                        
+                        // Update hidden textarea
+                        const editor = document.getElementById('rich-editor');
+                        const hiddenTextarea = document.getElementById('entry-content');
+                        hiddenTextarea.value = editor.innerHTML;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -818,6 +836,11 @@
             updateEditorStatus();
             updateWordCount();
             updateActiveButtons();
+            
+            // Update hidden textarea
+            const editor = document.getElementById('rich-editor');
+            const hiddenTextarea = document.getElementById('entry-content');
+            hiddenTextarea.value = editor.innerHTML;
         }
         
         function updateActiveButtons() {
@@ -831,22 +854,26 @@
                 const command = match[1];
                 let isActive = false;
                 
-                switch(command) {
-                    case 'bold':
-                        isActive = document.queryCommandState('bold');
-                        break;
-                    case 'italic':
-                        isActive = document.queryCommandState('italic');
-                        break;
-                    case 'underline':
-                        isActive = document.queryCommandState('underline');
-                        break;
-                    case 'bullet':
-                        isActive = document.queryCommandState('insertUnorderedList');
-                        break;
-                    case 'number':
-                        isActive = document.queryCommandState('insertOrderedList');
-                        break;
+                try {
+                    switch(command) {
+                        case 'bold':
+                            isActive = document.queryCommandState('bold');
+                            break;
+                        case 'italic':
+                            isActive = document.queryCommandState('italic');
+                            break;
+                        case 'underline':
+                            isActive = document.queryCommandState('underline');
+                            break;
+                        case 'bullet':
+                            isActive = document.queryCommandState('insertUnorderedList');
+                            break;
+                        case 'number':
+                            isActive = document.queryCommandState('insertOrderedList');
+                            break;
+                    }
+                } catch (e) {
+                    // Ignore errors
                 }
                 
                 btn.classList.toggle('active', isActive);
@@ -884,6 +911,7 @@
             }
         }
         
+        // ===== FORM FUNCTIONS =====
         function initForm() {
             // Category selection
             document.querySelectorAll('.category-btn').forEach(btn => {
@@ -903,20 +931,31 @@
                 });
             });
             
-            // Form submission
+            // FORM SUBMISSION - FIXED AND WORKING
             document.getElementById('entry-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 // Get form values
                 const title = document.getElementById('entry-title').value.trim();
-                const content = document.getElementById('entry-content').value.trim();
+                
+                // CRITICAL: Get content from rich editor and set to textarea
+                const editor = document.getElementById('rich-editor');
+                const hiddenTextarea = document.getElementById('entry-content');
+                hiddenTextarea.value = editor.innerHTML;
+                
+                const content = hiddenTextarea.value.trim();
                 const category = document.getElementById('entry-category').value;
                 const mood = document.getElementById('selected-mood').value;
                 const tags = document.getElementById('entry-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
                 
                 // Validation
-                if (!title || !content) {
-                    alert('Please fill in title and content');
+                if (!title) {
+                    alert('Please enter a title');
+                    return;
+                }
+                
+                if (!content || content === '<br>' || content === '') {
+                    alert('Please enter some content');
                     return;
                 }
                 
@@ -937,8 +976,11 @@
                 entries.push(newEntry);
                 localStorage.setItem('keture_entries', JSON.stringify(entries));
                 
+                // Clear draft after successful submission
+                localStorage.removeItem('keture_draft');
+                
                 // Show success and redirect
-                alert('Entry inscribed successfully!');
+                alert('✨ Entry inscribed successfully!');
                 window.location.href = 'index.html';
             });
             
@@ -965,7 +1007,7 @@
                 };
                 
                 localStorage.setItem('keture_draft', JSON.stringify(draft));
-                alert('Draft saved successfully!');
+                alert('📝 Draft saved successfully!');
             });
             
             // Load draft if exists
@@ -977,6 +1019,11 @@
                     if (draft.content) {
                         const editor = document.getElementById('rich-editor');
                         editor.innerHTML = draft.content;
+                        
+                        // Update hidden textarea with draft content
+                        const hiddenTextarea = document.getElementById('entry-content');
+                        hiddenTextarea.value = draft.content;
+                        
                         updateWordCount();
                     }
                     if (draft.category) {
@@ -1102,4 +1149,64 @@
                             <span class="mood-icon">💭</span>
                             <span class="mood-label">Reflective</span>
                         </div>
-                        <div class="mood-option" data-mood="
+                        <div class="mood-option" data-mood="🎭">
+                            <span class="mood-icon">🎭</span>
+                            <span class="mood-label">Dramatic</span>
+                        </div>
+                        <div class="mood-option" data-mood="🎨">
+                            <span class="mood-icon">🎨</span>
+                            <span class="mood-label">Creative</span>
+                        </div>
+                        <div class="mood-option" data-mood="🌌">
+                            <span class="mood-icon">🌌</span>
+                            <span class="mood-label">Melancholic</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selected-mood" value="💭">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="form-label">Tags / Threads</label>
+                <input type="text" id="entry-tags" placeholder="avant-garde, memory, texture, rhythm, silence, fabric... (separate with commas)" class="tags-input">
+                <p class="input-hint">What threads connect this thought to others?</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="save-draft" class="btn-draft">
+                    <i class="fas fa-bookmark"></i> Archive as Draft
+                </button>
+                <button type="submit" class="btn-inscribe">
+                    <i class="fas fa-feather-alt"></i> Inscribe into Archive
+                </button>
+            </div>
+        </form>
+
+        <div class="inscription-guide">
+            <h3><i class="fas fa-compass"></i> Guiding Prompts</h3>
+            <div class="prompts">
+                <div class="prompt" data-category="fashion">
+                    <h4>Fashion Dimension</h4>
+                    <p>"How does fabric speak? What memory lives in that silhouette?"</p>
+                </div>
+                <div class="prompt" data-category="culture">
+                    <h4>Culture Layer</h4>
+                    <p>"What patterns in society mirror patterns in nature?"</p>
+                </div>
+                <div class="prompt" data-category="music">
+                    <h4>Sound Layer</h4>
+                    <p>"What silence exists between the notes?"</p>
+                </div>
+                <div class="prompt" data-category="poetry">
+                    <h4>Poetry Space</h4>
+                    <p>"What truth hides in the space between words?"</p>
+                </div>
+                <div class="prompt" data-category="essay">
+                    <h4>Essay Form</h4>
+                    <p>"What argument emerges from these reflections?"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
